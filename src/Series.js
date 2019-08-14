@@ -2,31 +2,31 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 
-const Generos = () => {
+const Series = () => {
   const [data, setData] = useState([])
   useEffect(() => {
     axios
-      .get('/api/genres')
+      .get('/api/series')
       .then(res => {
         setData(res.data.data)
       })
   }, [])
 
-  const removeGenero = id => {
+  const removeSerie = id => {
     axios
-      .delete("api/genres/" + id)
+      .delete("api/series/" + id)
       .then(res => {
         setData(data.filter(item => item.id !== id))
       })
   }
-  const renderizaLinha = genero => {
+  const renderizaLinha = serie => {
     return (
-      <tr key={genero.id}>
-        <th scope="row">{genero.id}</th>
-        <td>{genero.name}</td>
+      <tr key={serie.id}>
+        <th scope="row">{serie.id}</th>
+        <td>{serie.name}</td>
         <td>
-          <button type="button" onClick={() => removeGenero(genero.id)} className="btn btn-outline-danger mr-1">Deletar</button>
-          <Link to={"/generos/" + genero.id} className="btn btn-outline-info">Editar</Link>
+          <button type="button" onClick={() => removeSerie(serie.id)} className="btn btn-outline-danger mr-1">Deletar</button>
+          <Link to={"/series/" + serie.id} className="btn btn-outline-info">Info</Link>
         </td>
       </tr>
     )
@@ -35,10 +35,10 @@ const Generos = () => {
   if (data.length === 0) {
     return (
       <div className='container'>
-        <h1>Gêneros</h1>
-        <Link to='generos/novo'>Novo gênero</Link>
+        <h1>Séries</h1>
+        <Link to='series/novo'>Nova série</Link>
         <div className="alert alert-warning" role="alert">
-          Você não possui gêneros para mostrar.
+          Você não possui séries para mostrar.
         </div>
       </div>
     )
@@ -46,8 +46,8 @@ const Generos = () => {
 
   return (
     <div className='container'>
-      <h1> Gêneros</h1>
-      <Link to='generos/novo'>Novo gênero</Link>
+      <h1>Séries</h1>
+      <Link to='series/novo'>Nova série</Link>
       <table className="table table-striped">
         <thead>
           <tr>
@@ -64,4 +64,4 @@ const Generos = () => {
   )
 }
 
-export default Generos
+export default Series

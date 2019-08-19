@@ -25,11 +25,11 @@ const NovaSerie = () => {
     <div className='container'>
       <h1>Nova Série</h1>
       <form>
-        <div className="form-group">
-          <label htmlFor="nome">Nome</label>
-          <input type="text" value={nome} onChange={onChange} className="form-control" id="nome" placeholder="Nome da série" />
+        <div className='form-group'>
+          <label htmlFor='nome'>Nome</label>
+          <input type='text' value={nome} onChange={onChange} className='form-control' id='nome' placeholder='Nome da série' />
         </div>
-        <button type="button" onClick={salvar} className="btn btn-outline-primary">Adicionar</button>
+        <button type='button' onClick={salvar} className='btn btn-outline-primary'>Adicionar</button>
       </form>
     </div>
   )

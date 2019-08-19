@@ -4,17 +4,37 @@ import { Redirect } from 'react-router-dom'
 import { Badge } from 'reactstrap'
 
 const InfoSerie = ({ match }) => {
-  const [nome, setNome] = useState('')
+  const [form, setForm] = useState({
+    name: ''
+  })
   const [sucesso, setSucesso] = useState(false)
   const [modo, setModo] = useState('INFO')
+  const [generos, setGeneros] = useState([])
+  const [generoId, setGeneroId] = useState('')
   const [data, setData] = useState({})
+
   useEffect(() => {
     axios
       .get('/api/series/' + match.params.id)
-      .then(res => [
+      .then(res => {
         setData(res.data)
-      ])
+        setForm(res.data)
+      })
   }, [match.params.id])
+
+  useEffect(() => {
+    axios
+      .get('/api/genres')
+      .then(res => {
+        setGeneros(res.data.data)
+        const generos = res.data.data
+        const encontrado = generos.find(valor => data.genre === valor.name)
+        
+        if (encontrado) {
+          setGeneroId(encontrado.id)
+        }
+      })
+  }, [data])
 
   //custom header
   const masterHeader = {
@@ -26,21 +46,38 @@ const InfoSerie = ({ match }) => {
     backgroundRepeat: 'no-repeat'
   }
 
-  const onChange = evt => {
-    setNome(evt.target.value)
+  const onChangeGenero = evt => {
+    setGeneroId(evt.target.value)
   }
-  const salvar = () => {
-    axios.post('/api/series', {
-      name: nome
+
+  const onChange = campo => evt => {
+    setForm({
+      ...form,
+      [campo]: evt.target.value
     })
+  }
+
+  const seleciona = valor => () => {
+    setForm({
+      ...form,
+      status: ''
+    });
+  }
+
+  const salvar = () => {
+    axios
+      .put('/api/series/' + match.params.id, {
+        ...form,
+        genre_id: generoId
+      })
       .then(res => {
         setSucesso(true)
       })
   }
 
-  if (sucesso) {
+  if (sucesso)
     return <Redirect to='/series' />
-  }
+
 
   return (
     <div>
@@ -54,8 +91,8 @@ const InfoSerie = ({ match }) => {
               <div className='col-9'>
                 <h1 className='font-weight-light text-white'>{data.name}</h1>
                 <div className='lead text-white'>
-                  <Badge color='success'>Assistindo</Badge>
-                  <Badge color='warning'>Para assistir</Badge>
+                  {data.status === 'ASSISTIDO' && <Badge color='success'>Assistindo</Badge>}
+                  {data.status === 'PARA_ASSISTIR' && <Badge color='warning'>Para assistir</Badge>}
                   Gênero: {data.genre}
                 </div>
               </div>
@@ -69,14 +106,38 @@ const InfoSerie = ({ match }) => {
       {
         modo === 'EDIT' &&
         <div className='container'>
-          <h1>Nova Série</h1>
-          <pre>{JSON.stringify(data)}</pre>
+          <h1>Editar série</h1>
+          <button onClick={() => { setModo('INFO') }} className='btn btn-outline-danger'>Cancelar</button>
           <form>
-            <div className="form-group">
-              <label htmlFor="nome">Nome</label>
-              <input type="text" value={nome} onChange={onChange} className="form-control" id="nome" placeholder="Nome do gênero" />
+            <div className='form-group'>
+              <label htmlFor='nome'>Nome</label>
+              <input type='text' value={form.name} onChange={onChange('name')} className='form-control' id='nome' placeholder='Nome do gênero' />
             </div>
-            <button type="button" onClick={salvar} className="btn btn-outline-primary">Adicionar</button>
+            <div className='form-group'>
+              <label htmlFor='comentarios'>Comentários</label>
+              <input type='text' value={form.coments} onChange={onChange('coments')} className='form-control' id='nome' placeholder='Nome do gênero' />
+            </div>
+            <div className='form-group'>
+              <label htmlFor='genero'>Gênero</label>
+              <select className='form-control' onChange={onChangeGenero} value={generoId}>
+                {generos.map(genero => <option key={genero.id} value={genero.id} >{genero.name}</option>)}
+              </select>
+            </div>
+
+            <div className='form-check'>
+              <input className='form-check-input' type='radio' checked={form.status === 'ASSISTIDO'} name='status' id='assistido' value='ASSISTIDO' onChange={seleciona('ASSISTIDO')} />
+              <label className='form-check-label' htmlFor='assistido'>
+                Assistindo
+              </label>
+            </div>
+            <div className='form-check'>
+              <input className='form-check-input' type='radio' checked={form.status === 'PARA_ASSISTIR'} name='status' id='paraAssistir' value='PARA_ASSISTIR' onChange={seleciona('PARA_ASSISTIR')} />
+              <label className='form-check-label' htmlFor='paraAssistir'>
+              Para assistir
+            </label>
+            </div>
+
+            <button type='button' onClick={salvar} className='btn btn-outline-primary'>Adicionar</button>
           </form>
         </div>
       }

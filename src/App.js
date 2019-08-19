@@ -22,13 +22,13 @@ function App() {
       <div>
         <Header />
         <Switch>
-          <Route path="/" exact component={Home} />
-          <Route path="/generos" exact component={Generos} />
-          <Route path="/generos/novo" exact component={NovoGenero} />
-          <Route path="/generos/:id" exact component={EditarGenero} />
-          <Route path="/series" exact component={Series} />
-          <Route path="/series/novo" exact component={NovaSerie} />
-          <Route path="/series/:id" exact component={InfoSerie} />
+          <Route path='/' exact component={Home} />
+          <Route path='/generos' exact component={Generos} />
+          <Route path='/generos/novo' exact component={NovoGenero} />
+          <Route path='/generos/:id' exact component={EditarGenero} />
+          <Route path='/series' exact component={Series} />
+          <Route path='/series/novo' exact component={NovaSerie} />
+          <Route path='/series/:id' exact component={InfoSerie} />
         </Switch>
       </div>
     </Router>
